@@ -7,12 +7,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
-        {
-            var dirX = Input.GetAxisRaw("Horizontal");
-            var dirY = Input.GetAxisRaw("Vertical");
-            var moveVector = new Vector3(dirX, 0, dirY) * speed * Time.deltaTime;
-            rb.MovePosition(transform.position + moveVector);
-        }
+        if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0) return;
+        var dirX = Input.GetAxis("Horizontal");
+        var dirY = Input.GetAxis("Vertical");
+        var moveVector = new Vector3(dirX, 0, dirY) * speed / 100;
+        rb.MovePosition(transform.position + moveVector);
     }
 }

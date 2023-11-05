@@ -139,7 +139,7 @@ Transform:
   m_Children:
   - {fileID: 8909834300594797058}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &-5636912108368828004
 Rigidbody:
@@ -181,4 +181,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: -5636912108368828004}
-  speed: 30
+  speed: 15

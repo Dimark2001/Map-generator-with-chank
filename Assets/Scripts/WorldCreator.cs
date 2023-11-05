@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -8,16 +9,15 @@ public class WorldCreator : MonoBehaviour
 {
     [SerializeField] private Transform poolObjectParent;
     [SerializeField] private Chunk chunkPrefab;
-    [SerializeField] private int countChunkByX = 9;
-    [SerializeField] private int countChunkByY = 9;
+    [SerializeField] private int chunkWidth = 9;
     [SerializeField] private int seed = 0;
     private ObjectPool<Chunk> _chunkPool;
 
     private void Awake()
     {
         SetSeed();
-        _chunkPool = new ObjectPool<Chunk>(CreatePool, OnGetChunk, OnReleaseChunk, null, true, countChunkByX*countChunkByY);
-        CreateChunks(Vector2.zero);
+        _chunkPool = new ObjectPool<Chunk>(CreatePool, OnGetChunk, OnReleaseChunk);
+        CreateChunks(Vector2Int.zero);
     }
 
     [Button()]
@@ -30,17 +30,13 @@ public class WorldCreator : MonoBehaviour
         Random.InitState(newSeed);
     }
 
-    public void CreateChunks(Vector2 chunkWithPlayerPos)
+    public void CreateChunks(Vector2Int chunkWithPlayerPos)
     {
-        var x = Mathf.RoundToInt(countChunkByX / 2 + 1);
-        var y = Mathf.RoundToInt(countChunkByY / 2 + 1);
-        for (var i = -x; i < countChunkByX-x; i++)
+        var chunkPoses = GetNeededPoses(chunkWithPlayerPos);
+        foreach (var chunkPos in chunkPoses)
         {
-            for (var j = -y; j < countChunkByY-y; j++)
-            {
-                var chunk = _chunkPool.Get();
-                chunk.SetChunkPos(new Vector2(i, j));
-            }
+            var chunk = _chunkPool.Get();
+            chunk.SetChunkPos(chunkPos);
         }
     }
 
@@ -59,5 +55,27 @@ public class WorldCreator : MonoBehaviour
     {
         chunk.ResetChunk();
         chunk.transform.SetParent(poolObjectParent);
+    }
+
+    private List<Vector2Int> GetNeededPoses(Vector2Int pos)
+    {
+        var closeTiles = new List<Vector2Int>();
+        var rad = chunkWidth/2;
+        var minX = pos.x - rad;
+        var minY = pos.y - rad;
+        var maxX = pos.x + rad;
+        var maxY = pos.y + rad;
+
+        for (var x = minX; x <= maxX; x++)
+        {
+            for (var y = minY; y <= maxY; y++)
+            {
+                var newPos = new Vector2Int(x, y);
+                if(!closeTiles.Contains(newPos))
+                    closeTiles.Add(newPos);
+            }
+        }
+        
+        return closeTiles;
     }
 }

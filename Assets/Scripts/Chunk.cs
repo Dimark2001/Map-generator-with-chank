@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
-    private Vector2 _chunkPos;
+    public Vector2Int ChunkPos { get; private set; }
 
-    public void SetChunkPos(Vector2 pos)
+    public void SetChunkPos(Vector2Int pos)
     {
-        _chunkPos = pos;
-        transform.position = new Vector3(_chunkPos.x, 0, _chunkPos.y) * 10;
+        ChunkPos = pos;
+        transform.position = new Vector3(ChunkPos.x, 0, ChunkPos.y) * 10;
     }
 
     public void CreateChunkEnvironment()
