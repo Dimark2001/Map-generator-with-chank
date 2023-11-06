@@ -11,7 +11,10 @@ public class WorldCreator : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Transform poolObjectParent;
     [SerializeField] private Chunk chunkPrefab;
-    [SerializeField] private int chunkWidth = 9;
+    [Tooltip("Установив значение отличное от нуля, можно получить предсказуемую генерацию")]
+    [Range(1, 9)]
+    [SerializeField] private int chunkWidth;
+    [Tooltip("Установив значение отличное от нуля, можно получить предсказуемую генерацию")]
     [SerializeField] private int seed = 0;
     private ObjectPool<Chunk> _chunkPool;
     private List<Chunk> _createdChunks;
@@ -76,7 +79,7 @@ public class WorldCreator : MonoBehaviour
     private List<Vector2Int> GetNeededPoses()
     {
         var closeTiles = new List<Vector2Int>();
-        var rad = chunkWidth/2;
+        var rad = chunkWidth;
         var minX = _currentChunkPos.x - rad;
         var minY = _currentChunkPos.y - rad;
         var maxX = _currentChunkPos.x + rad;
