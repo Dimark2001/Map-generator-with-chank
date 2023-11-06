@@ -448,7 +448,7 @@ MonoBehaviour:
   player: {fileID: 844906654}
   poolObjectParent: {fileID: 1708435309}
   chunkPrefab: {fileID: 8724971892552930730, guid: e993147ed5fe3e04db0c137f55ede22b, type: 3}
-  chunkWidth: 1
+  chunkWidth: 3
   seed: 0
 --- !u!4 &1352995303
 Transform:

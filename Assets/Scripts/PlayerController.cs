@@ -12,5 +12,5 @@ public class PlayerController : MonoBehaviour
         var dirY = Input.GetAxis("Vertical");
         var moveVector = new Vector3(dirX, 0, dirY);
         controller.Move(moveVector * (speed * Time.deltaTime));
-    }
+    } // Простое передвижение основанное на CharacterController
 }

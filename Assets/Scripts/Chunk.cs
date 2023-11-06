@@ -11,6 +11,10 @@ public class Chunk : MonoBehaviour
     
     public Vector2Int ChunkPos { get; private set; }
     private float _randomValue;
+    
+    /// <summary>
+    /// Устанавливает основные параметры чанка
+    /// </summary>
     public void Init(Vector2Int pos, float randomValue)
     {
         _randomValue = randomValue;
@@ -18,22 +22,19 @@ public class Chunk : MonoBehaviour
         transform.position = new Vector3(ChunkPos.x, 0, ChunkPos.y) * 10;
         ShowChunk();
     }
-
+    
     private void ShowChunk()
     {
         gameObject.SetActive(true);
         transform.DOScale(new Vector3(1, 1, 1), 0.2f);
-        SetTileEnvironment();
-    }
-
-    private void SetTileEnvironment()
-    {
-        wall.SetActive(false);
-        foreach (var environmentObject in environmentObjects)
-        {
-            environmentObject.SetActive(false);
-        }
+        GenerateChunkEnvironment();
+    } // Функция появления
     
+    /// <summary>
+    /// Генерирует наполнение чанка
+    /// </summary>
+    private void GenerateChunkEnvironment()
+    {
         for (var i = 0; i < environmentPoses.Count; i++)
         {
             var environmentPose = environmentPoses[i];
@@ -82,9 +83,16 @@ public class Chunk : MonoBehaviour
             wall.transform.rotation = Quaternion.Euler(new Vector3(0, _randomValue * 100 * ChunkPos.x * ChunkPos.y, 0));
         }
     }
-
+    /// <summary>
+    /// Убирает сгенерированное наполнение
+    /// </summary>
     public void ResetChunk()
     {
         gameObject.SetActive(false);
+        wall.SetActive(false);
+        foreach (var environmentObject in environmentObjects)
+        {
+            environmentObject.SetActive(false);
+        }
     }
 }

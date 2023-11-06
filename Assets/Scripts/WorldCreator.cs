@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
@@ -11,7 +10,7 @@ public class WorldCreator : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Transform poolObjectParent;
     [SerializeField] private Chunk chunkPrefab;
-    [Tooltip("Установив значение отличное от нуля, можно получить предсказуемую генерацию")]
+    [Tooltip("Радиус генерации чанков")]
     [Range(1, 9)]
     [SerializeField] private int chunkWidth;
     [Tooltip("Установив значение отличное от нуля, можно получить предсказуемую генерацию")]
@@ -20,22 +19,20 @@ public class WorldCreator : MonoBehaviour
     private List<Chunk> _createdChunks;
     private Vector2Int _currentChunkPos;
     private float _randomValue;
+    
     private void Awake()
     {
         _currentChunkPos = Vector2Int.zero;
-        GenerateMap();
-    }
-
-    [Button()]
-    private void GenerateMap()
-    {
-        SetSeed();
-        _chunkPool ??= new ObjectPool<Chunk>(CreatePool, OnGetChunk, OnReleaseChunk);
+        _chunkPool ??= new ObjectPool<Chunk>(CreateChunk, OnGetChunk, OnReleaseChunk);
         _createdChunks = new List<Chunk>(); 
-        CreateChunks();
+        
+        SetSeed();
+        GenerateChunks();
     }
 
-    [Button()]
+    /// <summary>
+    /// Устанавливает стартовое значение сида
+    /// </summary>
     private void SetSeed()
     {
         var newSeed = seed;
@@ -46,7 +43,10 @@ public class WorldCreator : MonoBehaviour
         _randomValue = Random.value;
     }
 
-    private void CreateChunks()
+    /// <summary>
+    /// Получает чанки из пула и инизиализизирует их
+    /// </summary>
+    private void GenerateChunks()
     {
         var chunkPoses = GetNeededPoses();
         foreach (var chunkPos in chunkPoses)
@@ -58,7 +58,7 @@ public class WorldCreator : MonoBehaviour
         }
     }
 
-    private Chunk CreatePool()
+    private Chunk CreateChunk()
     {
         return Instantiate(chunkPrefab, Vector3.zero, Quaternion.identity, poolObjectParent);
     }
@@ -75,7 +75,10 @@ public class WorldCreator : MonoBehaviour
         chunk.transform.SetParent(poolObjectParent);
         _createdChunks.Remove(chunk);
     }
-
+    
+    /// <summary>
+    /// Возвращает список позиций в радиусе, в которых необходимо сгенерировать чанки
+    /// </summary>
     private List<Vector2Int> GetNeededPoses()
     {
         var closeTiles = new List<Vector2Int>();
@@ -97,8 +100,10 @@ public class WorldCreator : MonoBehaviour
         
         return closeTiles;
     }
-
-    [Button()]
+    
+    /// <summary>
+    /// Возвращает ближайший к игроку чанк
+    /// </summary>
     private Vector2Int GetChunkWithPlayerPosition()
     {
         var pos = new Vector2Int();
@@ -114,7 +119,10 @@ public class WorldCreator : MonoBehaviour
     
         return pos;
     }
-
+    
+    /// <summary>
+    /// Удаляет чанки, расположенные за пределами радиуса генерации
+    /// </summary>
     private void ReleaseChunksOutsideTheRad()
     {
         var chunks = new List<Chunk>(_createdChunks);
@@ -136,7 +144,7 @@ public class WorldCreator : MonoBehaviour
         if (_currentChunkPos != currentChunkPos)
         {
             _currentChunkPos = currentChunkPos;
-            CreateChunks();
+            GenerateChunks();
             ReleaseChunksOutsideTheRad();
         }
     }
